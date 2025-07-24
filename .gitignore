@@ -55,6 +55,8 @@ build/
 .env.test.local
 .env.production.local
 .env*.local
+backend/.env
+backend/.env.docker
 
 # IDE
 .vscode/

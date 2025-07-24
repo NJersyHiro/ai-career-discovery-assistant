@@ -22,8 +22,20 @@ if command -v docker-compose &> /dev/null; then
     echo "Waiting for database to be ready..."
     sleep 5
     
+    # Copy Docker-specific env file if it exists
+    if [ -f "backend/.env.docker" ]; then
+        cp backend/.env.docker backend/.env.temp
+        mv backend/.env backend/.env.backup 2>/dev/null || true
+        mv backend/.env.temp backend/.env
+    fi
+    
     # Run migrations in a temporary container
     docker-compose run --rm backend alembic upgrade head
+    
+    # Restore original env file
+    if [ -f "backend/.env.backup" ]; then
+        mv backend/.env.backup backend/.env
+    fi
     
     echo "✅ Migrations completed successfully!"
     exit 0

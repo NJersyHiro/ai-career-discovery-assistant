@@ -23,24 +23,27 @@ class Settings(BaseSettings):
     REDIS_URL: str
     
     # CORS
-    CORS_ORIGINS: List[str] = []
+    CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:3001"]
     
     @validator("CORS_ORIGINS", pre=True)
-    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
+    def assemble_cors_origins(cls, v: Union[str, List[str], None]) -> List[str]:
+        if v is None:
+            return ["http://localhost:3000", "http://localhost:3001"]
         if isinstance(v, str):
             if not v:  # Handle empty string
-                return []
-            if not v.startswith("["):
-                return [i.strip() for i in v.split(",") if i.strip()]
-            # Try to parse as JSON array
-            try:
-                import json
-                return json.loads(v)
-            except json.JSONDecodeError:
-                return []
+                return ["http://localhost:3000", "http://localhost:3001"]
+            if v.startswith("["):
+                # Try to parse as JSON array
+                try:
+                    import json
+                    return json.loads(v)
+                except (json.JSONDecodeError, ValueError):
+                    pass
+            # Parse comma-separated string
+            return [i.strip() for i in v.split(",") if i.strip()]
         elif isinstance(v, list):
             return v
-        return []
+        return ["http://localhost:3000", "http://localhost:3001"]
     
     # Google Gemini API
     GEMINI_API_KEY: str
@@ -56,6 +59,19 @@ class Settings(BaseSettings):
     # File Upload
     MAX_UPLOAD_SIZE_MB: int = 10
     ALLOWED_EXTENSIONS: List[str] = ["pdf", "docx", "doc"]
+    
+    @validator("ALLOWED_EXTENSIONS", pre=True)
+    def assemble_allowed_extensions(cls, v: Union[str, List[str], None]) -> List[str]:
+        if v is None:
+            return ["pdf", "docx", "doc"]
+        if isinstance(v, str):
+            if not v:
+                return ["pdf", "docx", "doc"]
+            # Parse comma-separated string
+            return [i.strip() for i in v.split(",") if i.strip()]
+        elif isinstance(v, list):
+            return v
+        return ["pdf", "docx", "doc"]
     
     # Celery
     CELERY_BROKER_URL: str
