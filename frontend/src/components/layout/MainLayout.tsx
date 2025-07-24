@@ -36,7 +36,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     {
       key: 'profile',
       icon: <UserOutlined />,
-      label: 'プロフィール',
+      label: <Link to="/profile">プロフィール</Link>,
     },
     {
       type: 'divider' as const,
@@ -55,19 +55,45 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <Link to="/" className="flex items-center">
+              <Link to="/" className="flex items-center mr-8">
                 <h1 className="text-xl font-bold text-gray-900">
                   AI Career Discovery
                 </h1>
               </Link>
-              {/* Desktop Menu */}
-              <Menu
-                mode="horizontal"
-                selectedKeys={[location.pathname]}
-                items={menuItems}
-                className="ml-10 border-0 hidden md:flex"
-                style={{ flex: 'auto', minWidth: 0 }}
-              />
+              {/* Desktop Menu - 個別のリンクとして表示 */}
+              <nav className="hidden md:flex items-center space-x-6">
+                <Link
+                  to="/"
+                  className={`text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium ${
+                    location.pathname === '/' ? 'text-blue-600' : ''
+                  }`}
+                >
+                  <HomeOutlined className="mr-1" />
+                  ホーム
+                </Link>
+                {isAuthenticated && (
+                  <>
+                    <Link
+                      to="/upload"
+                      className={`text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium ${
+                        location.pathname === '/upload' ? 'text-blue-600' : ''
+                      }`}
+                    >
+                      <UploadOutlined className="mr-1" />
+                      書類アップロード
+                    </Link>
+                    <Link
+                      to="/dashboard"
+                      className={`text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium ${
+                        location.pathname === '/dashboard' ? 'text-blue-600' : ''
+                      }`}
+                    >
+                      <DashboardOutlined className="mr-1" />
+                      ダッシュボード
+                    </Link>
+                  </>
+                )}
+              </nav>
             </div>
 
             <div className="flex items-center">
@@ -109,7 +135,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         placement="left"
         onClose={() => setDrawerVisible(false)}
         open={drawerVisible}
-        bodyStyle={{ padding: 0 }}
+        styles={{ body: { padding: 0 } }}
       >
         <Menu
           mode="vertical"

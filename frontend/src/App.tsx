@@ -10,6 +10,7 @@ import RegisterPage from './features/auth/RegisterPage'
 import UploadPage from './features/document-upload/UploadPage'
 import AnalysisPage from './features/career-analysis/AnalysisPage'
 import DashboardPage from './features/dashboard/DashboardPage'
+import ProfilePage from './features/profile/ProfilePage'
 import TestPdfExtraction from './features/test/TestPdfExtraction'
 
 const queryClient = new QueryClient({
@@ -46,6 +47,11 @@ function App() {
                   <Route path="/dashboard" element={
                     <ProtectedRoute>
                       <DashboardPage />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/profile" element={
+                    <ProtectedRoute>
+                      <ProfilePage />
                     </ProtectedRoute>
                   } />
                   <Route path="/test-pdf" element={<TestPdfExtraction />} />
