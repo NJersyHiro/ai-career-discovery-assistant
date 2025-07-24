@@ -118,6 +118,24 @@ ai-career-discovery-assistant/
 
 [MIT License](LICENSE)
 
+## 🚀 デプロイメント
+
+本番環境へのデプロイ準備ができましたか？デプロイメントガイドをご覧ください：
+
+- 📖 [クイックデプロイガイド](QUICK_DEPLOY_GUIDE.md) - 15分で起動
+- 📚 [詳細デプロイメントガイド](DEPLOYMENT.md) - 包括的な本番環境セットアップ
+- 🚀 [デプロイスクリプト](deploy.sh) - 自動デプロイメントスクリプト
+
+### クイックスタート (DigitalOcean)
+```bash
+# サーバー上で実行
+git clone https://github.com/NJersyHiro/ai-career-discovery-assistant.git
+cd ai-career-discovery-assistant
+cp .env.production.example .env.production
+# .env.production を編集してGEMINI_API_KEYを設定
+./deploy.sh
+```
+
 ## 👥 作者
 
 AI Career Discovery Team
