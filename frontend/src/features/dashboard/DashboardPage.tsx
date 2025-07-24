@@ -56,8 +56,8 @@ const DashboardPage: React.FC = () => {
       setAnalyses(analysesData)
       
       // Calculate statistics
-      const completed = analysesData.filter((a: AnalysisData) => a.status === 'COMPLETED')
-      const pending = analysesData.filter((a: AnalysisData) => a.status === 'PENDING' || a.status === 'PROCESSING')
+      const completed = analysesData.filter((a: AnalysisData) => a.status === 'completed')
+      const pending = analysesData.filter((a: AnalysisData) => a.status === 'pending' || a.status === 'processing')
       
       let totalMatchScore = 0
       let matchCount = 0
@@ -197,9 +197,9 @@ const DashboardPage: React.FC = () => {
                   title={
                     <div className="flex items-center justify-between">
                       <span>{analysis.document?.filename || '不明なファイル'}</span>
-                      {analysis.status === 'COMPLETED' ? (
+                      {analysis.status === 'completed' ? (
                         <Tag color="success">分析完了</Tag>
-                      ) : analysis.status === 'PROCESSING' ? (
+                      ) : analysis.status === 'processing' ? (
                         <Tag color="processing">分析中</Tag>
                       ) : (
                         <Tag color="default">待機中</Tag>
@@ -208,7 +208,7 @@ const DashboardPage: React.FC = () => {
                   }
                   description={
                     <div>
-                      {analysis.status === 'COMPLETED' && analysis.career_recommendations && (
+                      {analysis.status === 'completed' && analysis.career_recommendations && (
                         <div className="mt-2">
                           <Row gutter={[8, 8]}>
                             {analysis.career_recommendations.map((rec, index) => (
