@@ -62,13 +62,71 @@ Data Layer (PostgreSQL + Redis + S3)
 
 ## 🚀 Getting Started
 
-### Clone the repository
+### Prerequisites
+- Docker and Docker Compose
+- Python 3.11+ (for local development)
+- Node.js 18+ (for local frontend development)
+- Google Gemini API key
+
+### Quick Start
+
+1. **Clone the repository**
 ```bash
 git clone https://github.com/NJersyHiro/ai-career-discovery-assistant.git
 cd ai-career-discovery-assistant
 ```
 
-### Development setup instructions will be added as the project structure is implemented.
+2. **Set up environment variables**
+```bash
+cp backend/.env.example backend/.env
+# Edit backend/.env and add your GEMINI_API_KEY
+```
+
+3. **Start the development environment**
+```bash
+# Using Docker (recommended)
+docker-compose up -d
+
+# Or run the setup script
+./scripts/setup-dev.sh
+```
+
+4. **Run database migrations**
+```bash
+# If using Docker
+./scripts/run-migrations.sh
+
+# Or using Make
+make db-migrate
+```
+
+5. **Access the applications**
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+- API Documentation: http://localhost:8000/api/v1/docs
+- MinIO Console: http://localhost:9001 (minioadmin/minioadmin)
+
+### Manual Setup (Alternative)
+
+If you prefer to run services locally without Docker:
+
+1. **Backend setup**
+```bash
+cd backend
+python3.11 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+alembic upgrade head
+uvicorn app.main:app --reload
+```
+
+2. **Frontend setup**
+```bash
+cd frontend
+npm install -g pnpm
+pnpm install
+pnpm dev
+```
 
 ## 📁 Project Structure
 

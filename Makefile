@@ -45,7 +45,11 @@ logs: ## View logs
 # Database
 .PHONY: db-migrate
 db-migrate: ## Run database migrations
-	cd backend && alembic upgrade head
+	@if [ -f backend/venv/bin/activate ]; then \
+		cd backend && source venv/bin/activate && alembic upgrade head; \
+	else \
+		docker-compose run --rm backend alembic upgrade head; \
+	fi
 
 .PHONY: db-rollback
 db-rollback: ## Rollback database migration
