@@ -6,6 +6,11 @@ set -e
 
 echo "🗄️  Running database migrations..."
 
+# Set default environment variables if not set
+export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-minioadmin}
+export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-minioadmin}
+export OPENAI_API_KEY=${OPENAI_API_KEY:-""}
+
 # Method 1: Try using Docker Compose
 if command -v docker-compose &> /dev/null; then
     echo "Using Docker Compose to run migrations..."

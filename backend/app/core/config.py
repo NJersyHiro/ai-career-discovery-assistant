@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import AnyHttpUrl, validator
 
@@ -26,23 +26,32 @@ class Settings(BaseSettings):
     CORS_ORIGINS: List[str] = []
     
     @validator("CORS_ORIGINS", pre=True)
-    def assemble_cors_origins(cls, v: str | List[str]) -> List[str]:
-        if isinstance(v, str) and not v.startswith("["):
-            return [i.strip() for i in v.split(",")]
-        elif isinstance(v, (list, str)):
+    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
+        if isinstance(v, str):
+            if not v:  # Handle empty string
+                return []
+            if not v.startswith("["):
+                return [i.strip() for i in v.split(",") if i.strip()]
+            # Try to parse as JSON array
+            try:
+                import json
+                return json.loads(v)
+            except json.JSONDecodeError:
+                return []
+        elif isinstance(v, list):
             return v
-        raise ValueError(v)
+        return []
     
     # Google Gemini API
     GEMINI_API_KEY: str
     GEMINI_MODEL: str = "gemini-pro"
     
     # AWS S3 / MinIO
-    AWS_ACCESS_KEY_ID: str
-    AWS_SECRET_ACCESS_KEY: str
+    AWS_ACCESS_KEY_ID: str = "minioadmin"
+    AWS_SECRET_ACCESS_KEY: str = "minioadmin"
     AWS_REGION: str = "us-east-1"
     S3_BUCKET_NAME: str = "career-assistant"
-    S3_ENDPOINT_URL: Optional[str] = None  # For MinIO in development
+    S3_ENDPOINT_URL: Optional[str] = "http://minio:9000"  # For MinIO in development
     
     # File Upload
     MAX_UPLOAD_SIZE_MB: int = 10
