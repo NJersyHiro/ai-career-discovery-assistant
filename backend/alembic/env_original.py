@@ -8,7 +8,8 @@ from alembic import context
 # Add project root to Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
-# Import models
+# Import your models and database settings
+from app.core.config import settings
 from app.models.base import Base
 from app.models.user import User
 from app.models.document import Document
@@ -18,9 +19,8 @@ from app.models.career_recommendation import CareerRecommendation
 # this is the Alembic Config object
 config = context.config
 
-# Get database URL from environment or use default
-database_url = os.environ.get("DATABASE_URL", "postgresql://postgres:postgres@db:5432/career_assistant")
-config.set_main_option("sqlalchemy.url", database_url)
+# Set database URL from settings
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 
 # Interpret the config file for Python logging.
 if config.config_file_name is not None:
