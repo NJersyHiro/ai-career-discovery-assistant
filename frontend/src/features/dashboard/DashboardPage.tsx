@@ -21,7 +21,7 @@ interface AnalysisData {
   document_id: number
   status: string
   created_at: string
-  document: {
+  document?: {
     filename: string
     document_type: string
   }
@@ -196,7 +196,7 @@ const DashboardPage: React.FC = () => {
                   avatar={<FileTextOutlined style={{ fontSize: '24px' }} />}
                   title={
                     <div className="flex items-center justify-between">
-                      <span>{analysis.document.filename}</span>
+                      <span>{analysis.document?.filename || '不明なファイル'}</span>
                       {analysis.status === 'COMPLETED' ? (
                         <Tag color="success">分析完了</Tag>
                       ) : analysis.status === 'PROCESSING' ? (

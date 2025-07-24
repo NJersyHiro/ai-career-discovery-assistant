@@ -110,7 +110,7 @@ const AnalysisPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <Card>
           <div className="text-center py-12">
-            <Spin size="large" tip="分析結果を読み込み中..." />
+            <Spin size="large" />
           </div>
         </Card>
       </div>

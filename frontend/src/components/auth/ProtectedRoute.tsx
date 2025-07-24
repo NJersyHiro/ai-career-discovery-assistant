@@ -14,7 +14,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Spin size="large" tip="読み込み中..." />
+        <Spin size="large" />
       </div>
     )
   }
