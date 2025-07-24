@@ -14,7 +14,7 @@ async def read_current_user(
     current_user: User = Depends(get_current_user)
 ):
     """Get current user information."""
-    return UserResponse.from_orm(current_user)
+    return UserResponse.model_validate(current_user)
 
 
 @router.put("/me", response_model=UserResponse)
@@ -48,7 +48,7 @@ async def update_current_user(
     db.commit()
     db.refresh(current_user)
     
-    return UserResponse.from_orm(current_user)
+    return UserResponse.model_validate(current_user)
 
 
 @router.get("/", response_model=List[UserResponse])
@@ -60,4 +60,4 @@ async def list_users(
 ):
     """List all users (superuser only)."""
     users = db.query(User).offset(skip).limit(limit).all()
-    return [UserResponse.from_orm(user) for user in users]
+    return [UserResponse.model_validate(user) for user in users]

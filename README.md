@@ -1,179 +1,129 @@
 # AI Career Discovery Assistant
 
-AI-powered career path analysis and recommendation system focused on the Japanese market. This service analyzes resumes, CVs, and skill sheets to reveal hidden career potential and generate personalized pathways for career transitions.
+日本の求職者向けのAIキャリア分析システム。履歴書や職務経歴書をアップロードすることで、AIが分析し、最適なキャリアパスを提案します。
 
-## 🎯 Overview
+## 🚀 主な機能
 
-The AI Career Discovery Assistant helps working professionals discover new career opportunities by:
-- Analyzing uploaded resumes/CVs using advanced NLP
-- Generating career paths across corporate, freelance, and entrepreneurship domains
-- Providing skill gap analysis and learning recommendations
-- Offering market insights and salary data (Premium)
+- **書類分析**: PDF/Word形式の履歴書・職務経歴書を自動分析
+- **OCR対応**: スキャンされたPDFも自動でテキスト抽出
+- **AIキャリア提案**: 3つのキャリアパス（企業転職、フリーランス、起業）を提案
+- **スキルマッチング**: 経験・スキルと求人市場のマッチング度を計算
+- **年収予測**: 各キャリアパスでの想定年収レンジを提示
 
-## 🚀 Key Features
+## 🛠️ 技術スタック
 
-### Phase 1 (MVP)
-- Document upload (PDF/Word) with Japanese format support
-- AI-powered skill extraction and analysis
-- Basic career path generation
-- Visual dashboard with career recommendations
+### Backend
+- FastAPI (Python 3.11)
+- PostgreSQL
+- Redis (キャッシュ・キュー)
+- Celery (非同期タスク処理)
+- Google Gemini API (AI分析)
 
-### Phase 2 (Enhanced)
-- Advanced skill gap analysis
-- Integration with Japanese learning platforms
-- Business model templates for entrepreneurs
-- User feedback system
+### Frontend
+- React 18 + TypeScript
+- Vite
+- Ant Design
+- Tailwind CSS
 
-### Phase 3 (Premium)
-- Market salary data integration
-- Qualification relevance analysis
-- Mentor network connections
-- Progress tracking
-
-## 🏗️ Architecture
-
-```
-Frontend (React + TypeScript)
-    ↓
-API Gateway
-    ↓
-Backend Services (FastAPI)
-    ↓
-AI/ML Engine (Transformers + Custom Models)
-    ↓
-Data Layer (PostgreSQL + Redis + S3)
-```
-
-## 🛠️ Tech Stack
-
-- **Frontend**: React, TypeScript, Vite, Tailwind CSS
-- **Backend**: Python, FastAPI, SQLAlchemy, Celery
-- **AI/ML**: Hugging Face Transformers, Japanese BERT models, LangChain
-- **Infrastructure**: Docker, Kubernetes, GitHub Actions
-- **Database**: PostgreSQL, Redis, S3/GCS
-
-## 📋 Prerequisites
-
-- Node.js 18+
-- Python 3.11+
+### Infrastructure
 - Docker & Docker Compose
-- PostgreSQL 15+
-- Redis 7+
+- MinIO (S3互換ストレージ)
 
-## 🚀 Getting Started
+## 📋 必要な環境
 
-### Prerequisites
-- Docker and Docker Compose
-- Python 3.11+ (for local development)
-- Node.js 18+ (for local frontend development)
-- Google Gemini API key
+- Docker Desktop
+- Git
+- Google Cloud Platform アカウント（Gemini API用）
 
-### Quick Start
+## 🚦 セットアップ
 
-1. **Clone the repository**
+1. リポジトリをクローン
 ```bash
-git clone https://github.com/NJersyHiro/ai-career-discovery-assistant.git
+git clone https://github.com/yourusername/ai-career-discovery-assistant.git
 cd ai-career-discovery-assistant
 ```
 
-2. **Set up environment variables**
+2. 環境変数の設定
 ```bash
+# backend/.env ファイルを作成
 cp backend/.env.example backend/.env
-# Edit backend/.env and add your GEMINI_API_KEY
 ```
 
-3. **Start the development environment**
+3. Gemini API キーの設定
+```env
+GEMINI_API_KEY=your-api-key-here
+```
+
+4. Dockerコンテナの起動
 ```bash
-# Using Docker (recommended)
+docker-compose up -d
+```
+
+5. アプリケーションへアクセス
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:8000
+- API Documentation: http://localhost:8000/docs
+
+## 📝 使い方
+
+1. ユーザー登録
+2. ログイン
+3. 履歴書または職務経歴書をアップロード
+4. AI分析の完了を待つ（通常1-2分）
+5. 分析結果とキャリア提案を確認
+
+## 🐳 Docker コマンド
+
+```bash
+# 起動
 docker-compose up -d
 
-# Or run the setup script
-./scripts/setup-dev.sh
+# 停止
+docker-compose down
+
+# ログ確認
+docker-compose logs -f
+
+# 再ビルド
+docker-compose up -d --build
 ```
 
-4. **Run database migrations**
-```bash
-# If using Docker
-./scripts/run-migrations.sh
-
-# Or using Make
-make db-migrate
-```
-
-5. **Access the applications**
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- API Documentation: http://localhost:8000/api/v1/docs
-- MinIO Console: http://localhost:9001 (minioadmin/minioadmin)
-
-### Manual Setup (Alternative)
-
-If you prefer to run services locally without Docker:
-
-1. **Backend setup**
-```bash
-cd backend
-python3.11 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
-alembic upgrade head
-uvicorn app.main:app --reload
-```
-
-2. **Frontend setup**
-```bash
-cd frontend
-npm install -g pnpm
-pnpm install
-pnpm dev
-```
-
-## 📁 Project Structure
+## 📊 システム構成
 
 ```
-.
-├── frontend/          # React TypeScript application
-├── backend/           # FastAPI Python services
-├── ml-models/         # Machine learning models
-├── infrastructure/    # Deployment configurations
-├── docs/             # Documentation
-├── DEVELOPMENT_PLAN.md # Detailed development roadmap
-├── CLAUDE.md         # AI assistant guidance
-└── TASKS.md          # Project requirements
+ai-career-discovery-assistant/
+├── backend/           # FastAPI バックエンド
+│   ├── app/          # アプリケーションコード
+│   ├── alembic/      # データベースマイグレーション
+│   └── tests/        # テストコード
+├── frontend/         # React フロントエンド
+│   ├── src/          # ソースコード
+│   └── public/       # 静的ファイル
+├── docker-compose.yml # Docker構成
+└── README.md         # このファイル
 ```
 
-## 🎯 Target Market
+## 🔒 セキュリティ
 
-Initial focus on Japan with:
-- Support for Japanese resume formats (履歴書) and CV formats (職務経歴書)
-- Integration with Japanese learning platforms
-- Compliance with Japan's Act on the Protection of Personal Information (APPI)
+- JWT認証によるセキュアなAPI
+- ファイルアップロードのバリデーション
+- SQL インジェクション対策
+- CORS設定による適切なアクセス制御
 
-## 📊 Success Metrics
+## 🤝 貢献
 
-- **Activation Rate**: 50% of users complete analysis within first week
-- **User Satisfaction**: 4.0/5.0 average rating
-- **NPS Score**: +20 within 6 months
+プルリクエストを歓迎します！大きな変更の場合は、まずissueを作成して変更内容について議論してください。
 
-## 🔐 Security & Compliance
+## 📄 ライセンス
 
-- APPI (Japan's Personal Information Protection Act) compliant
-- End-to-end encryption for sensitive data
-- Regular security audits
-- GDPR-ready for future expansion
+[MIT License](LICENSE)
 
-## 🤝 Contributing
+## 👥 作者
 
-This project is currently in initial development. Contribution guidelines will be added soon.
+AI Career Discovery Team
 
-## 📄 License
+## 🙏 謝辞
 
-License information will be added soon.
-
-## 📞 Contact
-
-For questions about this project, please open an issue on GitHub.
-
----
-
-🇯🇵 **Made with ❤️ for the Japanese job market**
+- Google Gemini API
+- FastAPI コミュニティ
+- React コミュニティ

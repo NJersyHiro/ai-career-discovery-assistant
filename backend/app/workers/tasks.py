@@ -6,7 +6,7 @@ from app.core.database import SessionLocal
 from app.models.analysis import Analysis, AnalysisStatus
 from app.models.document import Document
 from app.models.career_recommendation import CareerRecommendation, CareerType
-from app.services.gemini_service import gemini_service
+from app.services.gemini_service import GeminiService
 
 logger = logging.getLogger(__name__)
 
@@ -47,12 +47,12 @@ def process_analysis_task(self, analysis_id: int):
             raise ValueError(f"Document {analysis.document_id} not found")
         
         # Call Gemini API (synchronous version for Celery)
-        # Note: In production, you might want to use asyncio.run() here
-        import asyncio
-        result = asyncio.run(gemini_service.analyze_resume(
+        # Create a new instance for each task to avoid connection reuse issues
+        gemini_service = GeminiService()
+        result = gemini_service.analyze_resume_sync(
             document.raw_text,
             document.document_type.value
-        ))
+        )
         
         # Update analysis with results
         analysis.status = AnalysisStatus.COMPLETED

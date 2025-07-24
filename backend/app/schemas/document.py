@@ -25,6 +25,7 @@ class DocumentResponse(DocumentBase):
     structured_data: Optional[Dict[str, Any]] = None
     extracted_skills: Optional[List[str]] = None
     error_message: Optional[str] = None
+    analysis_id: Optional[int] = None
     
     class Config:
         from_attributes = True

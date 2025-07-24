@@ -1,0 +1,139 @@
+import React, { useState } from 'react'
+import { Layout, Menu, Button, Dropdown, Avatar, Space, Drawer } from 'antd'
+import { Link, useLocation } from 'react-router-dom'
+import {
+  HomeOutlined,
+  UploadOutlined,
+  DashboardOutlined,
+  UserOutlined,
+  LogoutOutlined,
+  MenuOutlined,
+} from '@ant-design/icons'
+import { useAuth } from '@/contexts/AuthContext'
+
+const { Header, Content, Footer } = Layout
+
+interface MainLayoutProps {
+  children: React.ReactNode
+}
+
+const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+  const { user, logout, isAuthenticated } = useAuth()
+  const location = useLocation()
+  const [drawerVisible, setDrawerVisible] = useState(false)
+
+  const menuItems = isAuthenticated
+    ? [
+        { key: '/', icon: <HomeOutlined />, label: <Link to="/">ホーム</Link> },
+        { key: '/upload', icon: <UploadOutlined />, label: <Link to="/upload">書類アップロード</Link> },
+        { key: '/dashboard', icon: <DashboardOutlined />, label: <Link to="/dashboard">ダッシュボード</Link> },
+      ]
+    : [
+        { key: '/', icon: <HomeOutlined />, label: <Link to="/">ホーム</Link> },
+      ]
+
+  const userMenuItems = [
+    {
+      key: 'profile',
+      icon: <UserOutlined />,
+      label: 'プロフィール',
+    },
+    {
+      type: 'divider' as const,
+    },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: 'ログアウト',
+      onClick: logout,
+    },
+  ]
+
+  return (
+    <Layout className="min-h-screen">
+      <Header className="fixed z-10 w-full bg-white shadow-sm" style={{ padding: 0 }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <Link to="/" className="flex items-center">
+                <h1 className="text-xl font-bold text-gray-900">
+                  AI Career Discovery
+                </h1>
+              </Link>
+              {/* Desktop Menu */}
+              <Menu
+                mode="horizontal"
+                selectedKeys={[location.pathname]}
+                items={menuItems}
+                className="ml-10 border-0 hidden md:flex"
+                style={{ flex: 'auto', minWidth: 0 }}
+              />
+            </div>
+
+            <div className="flex items-center">
+              {/* Mobile Menu Button */}
+              <Button
+                type="text"
+                icon={<MenuOutlined />}
+                onClick={() => setDrawerVisible(true)}
+                className="md:hidden"
+              />
+              
+              {isAuthenticated ? (
+                <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+                  <Button type="text" className="flex items-center">
+                    <Space>
+                      <Avatar icon={<UserOutlined />} />
+                      <span className="hidden sm:inline">{user?.full_name || user?.email}</span>
+                    </Space>
+                  </Button>
+                </Dropdown>
+              ) : (
+                <Space>
+                  <Link to="/login">
+                    <Button type="text">ログイン</Button>
+                  </Link>
+                  <Link to="/register">
+                    <Button type="primary">新規登録</Button>
+                  </Link>
+                </Space>
+              )}
+            </div>
+          </div>
+        </div>
+      </Header>
+
+      {/* Mobile Menu Drawer */}
+      <Drawer
+        title="メニュー"
+        placement="left"
+        onClose={() => setDrawerVisible(false)}
+        open={drawerVisible}
+        bodyStyle={{ padding: 0 }}
+      >
+        <Menu
+          mode="vertical"
+          selectedKeys={[location.pathname]}
+          items={menuItems}
+          onClick={() => setDrawerVisible(false)}
+        />
+      </Drawer>
+
+      <Content className="mt-16">
+        <div className="min-h-[calc(100vh-64px-70px)]">
+          {children}
+        </div>
+      </Content>
+
+      <Footer className="text-center bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <p className="text-gray-600">
+            AI Career Discovery Assistant ©{new Date().getFullYear()} Created with ❤️ for Japan
+          </p>
+        </div>
+      </Footer>
+    </Layout>
+  )
+}
+
+export default MainLayout

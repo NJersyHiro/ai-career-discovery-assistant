@@ -1,6 +1,7 @@
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Any
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import AnyHttpUrl, validator
+from pydantic import field_validator, ConfigDict
+import json
 
 
 class Settings(BaseSettings):
@@ -23,27 +24,17 @@ class Settings(BaseSettings):
     REDIS_URL: str
     
     # CORS
-    CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:3001"]
+    CORS_ORIGINS: Optional[Union[str, List[str]]] = None
     
-    @validator("CORS_ORIGINS", pre=True)
-    def assemble_cors_origins(cls, v: Union[str, List[str], None]) -> List[str]:
-        if v is None:
-            return ["http://localhost:3000", "http://localhost:3001"]
+    @field_validator("CORS_ORIGINS", mode='before')
+    @classmethod
+    def assemble_cors_origins(cls, v: Union[str, List[str], None]) -> Optional[List[str]]:
+        if v is None or v == "":
+            return None
         if isinstance(v, str):
-            if not v:  # Handle empty string
-                return ["http://localhost:3000", "http://localhost:3001"]
-            if v.startswith("["):
-                # Try to parse as JSON array
-                try:
-                    import json
-                    return json.loads(v)
-                except (json.JSONDecodeError, ValueError):
-                    pass
             # Parse comma-separated string
-            return [i.strip() for i in v.split(",") if i.strip()]
-        elif isinstance(v, list):
-            return v
-        return ["http://localhost:3000", "http://localhost:3001"]
+            return [origin.strip() for origin in v.split(",") if origin.strip()]
+        return v
     
     # Google Gemini API
     GEMINI_API_KEY: str
@@ -58,20 +49,17 @@ class Settings(BaseSettings):
     
     # File Upload
     MAX_UPLOAD_SIZE_MB: int = 10
-    ALLOWED_EXTENSIONS: List[str] = ["pdf", "docx", "doc"]
+    ALLOWED_EXTENSIONS: Optional[List[str]] = None
     
-    @validator("ALLOWED_EXTENSIONS", pre=True)
-    def assemble_allowed_extensions(cls, v: Union[str, List[str], None]) -> List[str]:
-        if v is None:
-            return ["pdf", "docx", "doc"]
+    @field_validator("ALLOWED_EXTENSIONS", mode='before')
+    @classmethod
+    def assemble_allowed_extensions(cls, v: Union[str, List[str], None]) -> Optional[List[str]]:
+        if v is None or v == "":
+            return None
         if isinstance(v, str):
-            if not v:
-                return ["pdf", "docx", "doc"]
             # Parse comma-separated string
-            return [i.strip() for i in v.split(",") if i.strip()]
-        elif isinstance(v, list):
-            return v
-        return ["pdf", "docx", "doc"]
+            return [ext.strip() for ext in v.split(",") if ext.strip()]
+        return v
     
     # Celery
     CELERY_BROKER_URL: str
@@ -86,10 +74,20 @@ class Settings(BaseSettings):
     # Logging
     LOG_LEVEL: str = "INFO"
     
+    # Email (optional, for future use)
+    SMTP_HOST: Optional[str] = None
+    SMTP_PORT: Optional[int] = 587
+    SMTP_USER: Optional[str] = None
+    SMTP_PASSWORD: Optional[str] = None
+    SMTP_FROM_EMAIL: Optional[str] = None
+    
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
-        case_sensitive=True
+        case_sensitive=True,
+        json_schema_extra={
+            "json_decode_error": "ignore"
+        }
     )
 
 

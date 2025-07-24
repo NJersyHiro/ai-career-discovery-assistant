@@ -49,6 +49,39 @@ class GeminiService:
             logger.error(f"Gemini API error: {str(e)}")
             raise
     
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        reraise=True
+    )
+    def analyze_resume_sync(self, resume_text: str, document_type: str) -> Dict[str, Any]:
+        """Synchronous version of analyze_resume for Celery tasks."""
+        
+        prompt = self._create_analysis_prompt(resume_text, document_type)
+        
+        try:
+            # Generate content using Gemini (synchronous)
+            response = self.model.generate_content(prompt)
+            
+            if not response.text:
+                logger.error("No text in Gemini response")
+                raise ValueError("Gemini returned empty response")
+            
+            logger.info(f"Raw Gemini response length: {len(response.text)}")
+            
+            # Extract JSON from response
+            parsed_response = self._extract_json_from_response(response.text)
+            
+            return {
+                "success": True,
+                "data": parsed_response,
+                "raw_response": response.text
+            }
+            
+        except Exception as e:
+            logger.error(f"Gemini API error: {str(e)}")
+            raise
+    
     def _create_analysis_prompt(self, resume_text: str, document_type: str) -> str:
         """Create prompt for Gemini based on document type."""
         
@@ -60,9 +93,12 @@ class GeminiService:
 分析する内容:
 1. スキルと経験の抽出
 2. 3つのキャリアパス提案（企業転職、フリーランス、起業）
-3. 各パスに必要なスキルギャップ
-4. 推定年収レンジ（日本市場）
-5. 具体的な次のステップ
+3. 各パスに必要なスキルと、既存スキルとのマッチ度計算
+4. 各パスに必要なスキルギャップ
+5. 推定年収レンジ（日本市場）
+6. 具体的な次のステップ
+
+重要: skill_match_percentageは、候補者の現在のスキルが各キャリアパスに必要なスキルとどの程度マッチしているかを0-100の整数で必ず計算してください。
 
 以下の形式の厳密なJSONのみを出力してください（JSON以外の解説文、マークダウン、``` などを絶対に含めないでください）:
 
@@ -75,13 +111,14 @@ class GeminiService:
       "title": "職種名",
       "description": "説明",
       "required_skills": ["必要スキル1", ...],
+      "skill_match_percentage": スキルマッチ度(0-100の整数),
       "skill_gaps": ["不足スキル1", ...],
       "salary_range": {{
-        "min": 最低年収,
-        "max": 最高年収
+        "min": 最低年収(整数),
+        "max": 最高年収(整数)
       }},
       "market_demand": "high/medium/low",
-      "confidence_score": 0.0-1.0,
+      "confidence_score": 0.0-1.0の小数,
       "next_steps": ["ステップ1", ...]
     }},
     {{
