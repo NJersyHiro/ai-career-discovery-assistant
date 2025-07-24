@@ -1,0 +1,42 @@
+山田 太郎
+Taro Yamada
+
+連絡先:
+メール: taro.yamada@example.com
+電話: 090-1234-5678
+住所: 東京都渋谷区
+
+職歴:
+2020年4月 - 現在
+株式会社テクノロジー
+ソフトウェアエンジニア
+- React/TypeScriptを使用したWebアプリケーション開発
+- Python/FastAPIによるRESTful API設計・実装
+- AWSを活用したインフラ構築
+- アジャイル開発チームでのプロジェクト推進
+
+2018年4月 - 2020年3月
+株式会社ITソリューション
+ジュニアエンジニア
+- JavaによるWebアプリケーション開発
+- SQLデータベース設計
+- ユニットテストの作成
+
+学歴:
+2014年4月 - 2018年3月
+東京大学 工学部 情報工学科
+
+スキル:
+プログラミング言語: Python, JavaScript, TypeScript, Java
+フレームワーク: React, FastAPI, Spring Boot
+データベース: PostgreSQL, MySQL, MongoDB
+クラウド: AWS (EC2, S3, Lambda)
+その他: Docker, Git, CI/CD, アジャイル開発
+
+資格:
+- 基本情報技術者試験
+- AWS Certified Solutions Architect - Associate
+
+自己PR:
+チームワークを大切にし、新しい技術の習得に積極的です。
+ユーザー視点でのサービス開発を心がけています。

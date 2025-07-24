@@ -3,8 +3,10 @@ from datetime import datetime
 from celery import Task
 from app.workers.celery_app import celery_app
 from app.core.database import SessionLocal
-from app.models.analysis import Analysis, AnalysisStatus
+# Import all models to ensure they're loaded before using relationships
+from app.models.user import User  # Import User model first
 from app.models.document import Document
+from app.models.analysis import Analysis, AnalysisStatus
 from app.models.career_recommendation import CareerRecommendation, CareerType
 from app.services.gemini_service import GeminiService
 
