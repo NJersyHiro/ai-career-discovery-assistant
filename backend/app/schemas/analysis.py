@@ -27,12 +27,22 @@ class AnalysisResponse(BaseModel):
         from_attributes = True
 
 
+class DocumentInfo(BaseModel):
+    filename: str
+    document_type: str
+    
+    class Config:
+        from_attributes = True
+
+
 class AnalysisListResponse(BaseModel):
     id: int
     document_id: int
     status: AnalysisStatus
     created_at: datetime
     processing_time: Optional[float] = None
+    document: Optional[DocumentInfo] = None
+    career_recommendations: Optional[List[Dict[str, Any]]] = None
     
     class Config:
         from_attributes = True

@@ -101,14 +101,53 @@ async def list_analyses(
 ):
     """List user's analyses."""
     
+    from sqlalchemy.orm import joinedload
+    
     query = db.query(Analysis).filter(Analysis.user_id == current_user.id)
     
     if document_id:
         query = query.filter(Analysis.document_id == document_id)
     
-    analyses = query.offset(skip).limit(limit).all()
+    # Join with document and career_recommendations
+    analyses = query.options(
+        joinedload(Analysis.document),
+        joinedload(Analysis.career_recommendations)
+    ).order_by(Analysis.created_at.desc()).offset(skip).limit(limit).all()
     
-    return [AnalysisListResponse.from_orm(analysis) for analysis in analyses]
+    # Convert to response format with document info
+    result = []
+    for analysis in analyses:
+        analysis_dict = {
+            "id": analysis.id,
+            "document_id": analysis.document_id,
+            "status": analysis.status,
+            "created_at": analysis.created_at,
+            "processing_time": analysis.processing_time
+        }
+        
+        # Add document info if available
+        if analysis.document:
+            analysis_dict["document"] = {
+                "filename": analysis.document.filename,
+                "document_type": analysis.document.document_type
+            }
+        
+        # Add career recommendations if completed
+        if analysis.status == AnalysisStatus.COMPLETED and analysis.career_recommendations:
+            analysis_dict["career_recommendations"] = [
+                {
+                    "career_type": rec.career_type.value,
+                    "title": rec.title,
+                    "skill_match_percentage": rec.skill_match_percentage,
+                    "salary_range_min": rec.salary_range_min,
+                    "salary_range_max": rec.salary_range_max
+                }
+                for rec in analysis.career_recommendations
+            ]
+        
+        result.append(AnalysisListResponse(**analysis_dict))
+    
+    return result
 
 
 @router.post("/{analysis_id}/process")
