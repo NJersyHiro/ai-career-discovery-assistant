@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, status, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, status
 from sqlalchemy.orm import Session
 from typing import List
 import aiofiles
@@ -20,7 +20,6 @@ router = APIRouter()
 
 @router.post("/upload", response_model=DocumentResponse)
 async def upload_document(
-    background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
@@ -100,11 +99,9 @@ async def upload_document(
         db.commit()
         db.refresh(db_analysis)
         
-        # Queue background task for analysis
-        background_tasks.add_task(
-            process_analysis_task,
-            analysis_id=db_analysis.id
-        )
+        # Queue Celery task for analysis
+        from app.workers.tasks import process_analysis_task
+        process_analysis_task.delay(db_analysis.id)
         
         # Return document response with analysis_id
         response = DocumentResponse.from_orm(db_document)
